@@ -2,7 +2,6 @@ package com.taskqueue.server;
 
 import com.taskqueue.broker.TaskBroker;
 import com.taskqueue.persistence.TaskRepository;
-import com.taskqueue.worker.WorkerPool;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -35,7 +34,6 @@ public class TCPServer {
     private ExecutorService clientPool;
     private Thread acceptThread;
     private volatile boolean running = false;
-    private WorkerPool workerPool;
 
     /**
      * Callback interface for server shutdown events.
@@ -78,15 +76,6 @@ public class TCPServer {
      */
     public void setShutdownCallback(ShutdownCallback callback) {
         this.shutdownCallback = callback;
-    }
-
-    /**
-     * Sets the worker pool reference (used by SHUTDOWN command).
-     *
-     * @param workerPool the worker pool
-     */
-    public void setWorkerPool(WorkerPool workerPool) {
-        this.workerPool = workerPool;
     }
 
     /**

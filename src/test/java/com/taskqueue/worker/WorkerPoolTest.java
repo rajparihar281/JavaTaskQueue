@@ -1,7 +1,6 @@
 package com.taskqueue.worker;
 
 import com.taskqueue.broker.TaskBroker;
-import com.taskqueue.handler.TaskHandler;
 import com.taskqueue.handler.TaskHandlerRegistry;
 import com.taskqueue.model.Priority;
 import com.taskqueue.model.Task;

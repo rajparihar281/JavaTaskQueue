@@ -82,7 +82,6 @@ public class Main {
 
         // 7. Create and start TCP server
         TCPServer tcpServer = new TCPServer(SERVER_PORT, broker, repository);
-        tcpServer.setWorkerPool(workerPool);
         tcpServer.setShutdownCallback(() -> {
             LOGGER.info("Shutdown command received, shutting down...");
             tcpServer.stop();
