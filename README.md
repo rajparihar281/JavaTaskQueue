@@ -2,7 +2,7 @@
 
 > A distributed-style Task Queue and Job Scheduler in pure Java 17 — inspired by Celery and Sidekiq.
 
-[![CI](https://github.com/your-repo/JavaTaskQueue/actions/workflows/ci.yml/badge.svg)](https://github.com/your-repo/JavaTaskQueue/actions)
+[![CI](https://github.com/rajparihar281/JavaTaskQueue/actions/workflows/ci.yml/badge.svg)](https://github.com/rajparihar281/JavaTaskQueue/actions)
 
 ---
 
