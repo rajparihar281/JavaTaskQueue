@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.geometry.Insets?>
+
+<BorderPane xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.taskqueue.gui.controller.MainController"
+            styleClass="root"
+            prefWidth="900" prefHeight="600">
+
+    <!-- ======================== TOP BAR ======================== -->
+    <top>
+        <HBox styleClass="top-bar" alignment="CENTER_LEFT" spacing="12">
+            <padding><Insets top="10" bottom="10" left="16" right="16"/></padding>
+
+            <Label fx:id="titleLabel" text="JavaTaskQueue" styleClass="app-title"/>
+
+            <Region HBox.hgrow="ALWAYS"/>
+
+            <Circle fx:id="connectionIndicator" radius="6" styleClass="indicator-disconnected"/>
+            <Label fx:id="connectionLabel" text="Disconnected" styleClass="connection-label"/>
+
+            <Button fx:id="reconnectButton" text="Reconnect" styleClass="btn-outline"
+                    onAction="#onReconnect"/>
+            <Button fx:id="shutdownButton" text="Shutdown Server" styleClass="btn-danger"
+                    onAction="#onShutdown"/>
+        </HBox>
+    </top>
+
+    <!-- ======================== CENTER ======================== -->
+    <center>
+        <HBox spacing="0">
+            <!-- ============ LEFT PANEL ============ -->
+            <VBox styleClass="left-panel" prefWidth="240" minWidth="240" maxWidth="240" spacing="16">
+                <padding><Insets top="16" bottom="16" left="16" right="16"/></padding>
+
+                <!-- Queue Stats Card -->
+                <VBox styleClass="stat-card" spacing="8">
+                    <padding><Insets top="14" bottom="14" left="14" right="14"/></padding>
+                    <Label text="Queue Stats" styleClass="card-title"/>
+                    <Separator/>
+
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="Total Tasks" styleClass="stat-label"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="totalCount" text="0" styleClass="stat-value"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="Pending" styleClass="stat-label-pending"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="pendingCount" text="0" styleClass="stat-value-pending"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="Running" styleClass="stat-label-running"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="runningCount" text="0" styleClass="stat-value-running"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="Done" styleClass="stat-label-done"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="doneCount" text="0" styleClass="stat-value-done"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="Failed" styleClass="stat-label-failed"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="failedCount" text="0" styleClass="stat-value-failed"/>
+                    </HBox>
+                    <HBox alignment="CENTER_LEFT" spacing="8">
+                        <Label text="Cancelled" styleClass="stat-label-cancelled"/>
+                        <Region HBox.hgrow="ALWAYS"/>
+                        <Label fx:id="cancelledCount" text="0" styleClass="stat-value-cancelled"/>
+                    </HBox>
+                </VBox>
+
+                <Region VBox.vgrow="ALWAYS"/>
+
+                <!-- Action buttons -->
+                <Button fx:id="submitButton" text="＋ Submit New Task" styleClass="btn-primary"
+                        maxWidth="Infinity" onAction="#onSubmitNewTask"/>
+                <Button fx:id="refreshButton" text="↻ Refresh Now" styleClass="btn-outline"
+                        maxWidth="Infinity" onAction="#onRefreshNow"/>
+            </VBox>
+
+            <!-- ============ RIGHT PANEL ============ -->
+            <VBox HBox.hgrow="ALWAYS" styleClass="right-panel">
+                <padding><Insets top="16" bottom="0" left="16" right="16"/></padding>
+
+                <Label text="Task Queue" styleClass="section-title"/>
+
+                <TableView fx:id="taskTable" VBox.vgrow="ALWAYS" styleClass="task-table">
+                    <columns>
+                        <TableColumn fx:id="colTaskId"    text="Task ID"    prefWidth="100" minWidth="80"/>
+                        <TableColumn fx:id="colType"      text="Type"       prefWidth="90"  minWidth="70"/>
+                        <TableColumn fx:id="colPriority"  text="Priority"   prefWidth="80"  minWidth="60"/>
+                        <TableColumn fx:id="colStatus"    text="Status"     prefWidth="90"  minWidth="70"/>
+                        <TableColumn fx:id="colCreatedAt" text="Created At" prefWidth="90"  minWidth="70"/>
+                        <TableColumn fx:id="colRetry"     text="Retry"      prefWidth="55"  minWidth="45"/>
+                        <TableColumn fx:id="colActions"   text="Actions"    prefWidth="80"  minWidth="70"/>
+                    </columns>
+                </TableView>
+            </VBox>
+        </HBox>
+    </center>
+
+    <!-- ======================== BOTTOM STATUS BAR ======================== -->
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="12">
+            <padding><Insets top="6" bottom="6" left="16" right="16"/></padding>
+            <Label fx:id="lastRefreshedLabel" text="Last refreshed: --:--:--" styleClass="status-text"/>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="taskCountLabel" text="Tasks in queue: 0" styleClass="status-text"/>
+        </HBox>
+    </bottom>
+
+</BorderPane>

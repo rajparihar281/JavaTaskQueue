@@ -1,0 +1,417 @@
+/* =============================================================
+   JavaTaskQueue Dashboard — Dark Theme Stylesheet
+   Background: #1e1e2e   Cards: #2a2a3e   Accent: #7c6af7
+   Text: #cdd6f4          Subtle: #585b70
+   ============================================================= */
+
+/* ---- Root ---- */
+.root {
+    -fx-background-color: #1e1e2e;
+    -fx-font-family: "Segoe UI", "System", sans-serif;
+    -fx-font-size: 13px;
+    -fx-text-fill: #cdd6f4;
+}
+
+/* ---- Top Bar ---- */
+.top-bar {
+    -fx-background-color: #181825;
+    -fx-border-color: transparent transparent #313244 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.app-title {
+    -fx-text-fill: #7c6af7;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.connection-label {
+    -fx-text-fill: #a6adc8;
+    -fx-font-size: 12px;
+}
+
+/* ---- Left Panel ---- */
+.left-panel {
+    -fx-background-color: #181825;
+    -fx-border-color: transparent #313244 transparent transparent;
+    -fx-border-width: 0 1 0 0;
+}
+
+/* ---- Right Panel ---- */
+.right-panel {
+    -fx-background-color: #1e1e2e;
+}
+
+.section-title {
+    -fx-text-fill: #cdd6f4;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 0 0 8 0;
+}
+
+/* ---- Stat Card ---- */
+.stat-card {
+    -fx-background-color: #2a2a3e;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: #313244;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.25), 8, 0, 0, 2);
+}
+
+.card-title {
+    -fx-text-fill: #cdd6f4;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.stat-label, .stat-value {
+    -fx-text-fill: #cdd6f4;
+    -fx-font-size: 13px;
+}
+
+/* Status-specific label colours */
+.stat-label-pending, .stat-value-pending   { -fx-text-fill: #f9e2af; }
+.stat-label-running, .stat-value-running   { -fx-text-fill: #89b4fa; }
+.stat-label-done,    .stat-value-done      { -fx-text-fill: #a6e3a1; }
+.stat-label-failed,  .stat-value-failed    { -fx-text-fill: #f38ba8; }
+.stat-label-cancelled,.stat-value-cancelled { -fx-text-fill: #6c7086; }
+
+.stat-value, .stat-value-pending, .stat-value-running,
+.stat-value-done, .stat-value-failed, .stat-value-cancelled {
+    -fx-font-weight: bold;
+    -fx-font-size: 15px;
+}
+
+/* ---- Separator ---- */
+.separator .line {
+    -fx-border-color: #313244;
+    -fx-border-width: 0.5 0 0 0;
+}
+
+/* ---- Buttons ---- */
+.btn-primary {
+    -fx-background-color: #7c6af7;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 8 16 8 16;
+}
+.btn-primary:hover {
+    -fx-background-color: #9080fa;
+}
+.btn-primary:pressed {
+    -fx-background-color: #6858d9;
+}
+.btn-primary:disabled {
+    -fx-background-color: #45475a;
+    -fx-text-fill: #6c7086;
+}
+
+.btn-danger {
+    -fx-background-color: #f38ba8;
+    -fx-text-fill: #1e1e2e;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+.btn-danger:hover {
+    -fx-background-color: #f5a0b8;
+}
+.btn-danger:pressed {
+    -fx-background-color: #e06c8a;
+}
+.btn-danger:disabled {
+    -fx-background-color: #45475a;
+    -fx-text-fill: #6c7086;
+}
+
+.btn-outline {
+    -fx-background-color: transparent;
+    -fx-border-color: #585b70;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-text-fill: #cdd6f4;
+    -fx-cursor: hand;
+    -fx-padding: 6 14 6 14;
+}
+.btn-outline:hover {
+    -fx-background-color: #313244;
+    -fx-border-color: #7c6af7;
+    -fx-text-fill: #7c6af7;
+}
+.btn-outline:pressed {
+    -fx-background-color: #2a2a3e;
+}
+.btn-outline:disabled {
+    -fx-border-color: #45475a;
+    -fx-text-fill: #6c7086;
+}
+
+/* ---- Connection Indicators ---- */
+.indicator-connected {
+    -fx-fill: #a6e3a1;
+    -fx-effect: dropshadow(gaussian, #a6e3a1, 6, 0.4, 0, 0);
+}
+
+.indicator-disconnected {
+    -fx-fill: #f38ba8;
+    -fx-effect: dropshadow(gaussian, #f38ba8, 6, 0.4, 0, 0);
+}
+
+/* ---- Status Bar ---- */
+.status-bar {
+    -fx-background-color: #181825;
+    -fx-border-color: #313244 transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+.status-text {
+    -fx-text-fill: #6c7086;
+    -fx-font-size: 11px;
+}
+
+/* =============================================================
+   Table View — Dark Theme
+   ============================================================= */
+.table-view {
+    -fx-background-color: #1e1e2e;
+    -fx-border-color: #313244;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+}
+
+.table-view .filler {
+    -fx-background-color: #1e1e2e;
+}
+
+/* Column headers */
+.table-view .column-header-background {
+    -fx-background-color: #2a2a3e;
+}
+
+.table-view .column-header-background .filler {
+    -fx-background-color: #2a2a3e;
+}
+
+.table-view .column-header {
+    -fx-background-color: #2a2a3e;
+    -fx-border-color: transparent transparent #313244 transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #a6adc8;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+    -fx-padding: 6 8 6 8;
+}
+
+/* Table rows */
+.table-row-cell {
+    -fx-background-color: #1e1e2e;
+    -fx-border-color: transparent transparent #232336 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-table-cell-border-color: transparent;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #22223a;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: #3a3a5e;
+}
+
+.table-row-cell:hover {
+    -fx-background-color: #2e2e4a;
+}
+
+.table-cell {
+    -fx-text-fill: #cdd6f4;
+    -fx-padding: 6 8 6 8;
+}
+
+/* Table placeholder */
+.table-view .placeholder .label {
+    -fx-text-fill: #585b70;
+}
+
+/* ---- Status row classes (applied dynamically) ---- */
+.status-running {
+    -fx-background-color: #2a3a5e !important;
+}
+
+.status-done {
+    -fx-background-color: #1a3a2a !important;
+}
+
+.status-failed {
+    -fx-background-color: #3a1a1a !important;
+}
+
+.status-cancelled {
+    -fx-background-color: #1e1e2e !important;
+}
+.status-cancelled .table-cell {
+    -fx-text-fill: #585b70;
+}
+
+/* =============================================================
+   Scrollbar — Dark Theme
+   ============================================================= */
+.scroll-bar {
+    -fx-background-color: #1e1e2e;
+}
+
+.scroll-bar .thumb {
+    -fx-background-color: #45475a;
+    -fx-background-radius: 4;
+}
+
+.scroll-bar .thumb:hover {
+    -fx-background-color: #585b70;
+}
+
+.scroll-bar .increment-button,
+.scroll-bar .decrement-button {
+    -fx-background-color: transparent;
+    -fx-padding: 0;
+}
+
+.scroll-bar .increment-arrow,
+.scroll-bar .decrement-arrow {
+    -fx-shape: "";
+    -fx-padding: 0;
+}
+
+.scroll-bar .track {
+    -fx-background-color: #1e1e2e;
+}
+
+/* =============================================================
+   Dialog / Submit Task Styles
+   ============================================================= */
+.dialog-root {
+    -fx-background-color: #1e1e2e;
+}
+
+.dialog-title {
+    -fx-text-fill: #cdd6f4;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.field-label {
+    -fx-text-fill: #a6adc8;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.hint-label {
+    -fx-text-fill: #585b70;
+    -fx-font-size: 11px;
+    -fx-font-style: italic;
+}
+
+.dark-field, .dark-choice {
+    -fx-background-color: #2a2a3e;
+    -fx-text-fill: #cdd6f4;
+    -fx-border-color: #313244;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-padding: 6 10 6 10;
+    -fx-prompt-text-fill: #585b70;
+}
+
+.dark-field:focused, .dark-choice:focused {
+    -fx-border-color: #7c6af7;
+}
+
+.dark-radio {
+    -fx-text-fill: #cdd6f4;
+}
+
+.dark-radio .radio {
+    -fx-background-color: #2a2a3e;
+    -fx-border-color: #585b70;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.dark-radio:selected .radio {
+    -fx-border-color: #7c6af7;
+}
+
+.dark-radio:selected .dot {
+    -fx-background-color: #7c6af7;
+}
+
+/* ---- Choice Box styling ---- */
+.dark-choice .label {
+    -fx-text-fill: #cdd6f4;
+}
+
+.dark-choice .open-button {
+    -fx-background-color: transparent;
+}
+
+.dark-choice .arrow {
+    -fx-background-color: #585b70;
+}
+
+/* Context menu / choice-box drop-down */
+.context-menu {
+    -fx-background-color: #2a2a3e;
+    -fx-border-color: #313244;
+    -fx-border-radius: 6;
+    -fx-background-radius: 6;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 12, 0, 0, 4);
+}
+
+.menu-item {
+    -fx-background-color: transparent;
+}
+
+.menu-item:hover, .menu-item:focused {
+    -fx-background-color: #3a3a5e;
+}
+
+.menu-item .label {
+    -fx-text-fill: #cdd6f4;
+}
+
+/* ---- Alert / Dialog Pane dark theme ---- */
+.dialog-pane {
+    -fx-background-color: #1e1e2e;
+}
+
+.dialog-pane .content.label {
+    -fx-text-fill: #cdd6f4;
+}
+
+.dialog-pane .header-panel {
+    -fx-background-color: #2a2a3e;
+}
+
+.dialog-pane .header-panel .label {
+    -fx-text-fill: #cdd6f4;
+}
+
+.dialog-pane .button-bar .btn-cancel {
+    -fx-background-color: #45475a;
+    -fx-text-fill: #cdd6f4;
+}
+
+/* ---- Tooltip ---- */
+.tooltip {
+    -fx-background-color: #2a2a3e;
+    -fx-text-fill: #cdd6f4;
+    -fx-border-color: #7c6af7;
+    -fx-border-radius: 4;
+    -fx-background-radius: 4;
+    -fx-font-size: 12px;
+    -fx-padding: 6 10 6 10;
+}

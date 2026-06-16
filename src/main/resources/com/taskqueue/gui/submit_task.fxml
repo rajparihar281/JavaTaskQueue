@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml"
+      fx:controller="com.taskqueue.gui.controller.SubmitTaskController"
+      styleClass="dialog-root"
+      spacing="14" prefWidth="420" prefHeight="400">
+    <padding><Insets top="24" bottom="24" left="28" right="28"/></padding>
+
+    <Label text="Submit New Task" styleClass="dialog-title"/>
+    <Separator/>
+
+    <!-- Task Type -->
+    <VBox spacing="4">
+        <Label text="Task Type" styleClass="field-label"/>
+        <ChoiceBox fx:id="taskTypeChoice" maxWidth="Infinity" styleClass="dark-choice"/>
+    </VBox>
+
+    <!-- Custom Type (hidden by default) -->
+    <TextField fx:id="customTypeField" promptText="Enter custom type name"
+               styleClass="dark-field" visible="false" managed="false"/>
+
+    <!-- Payload -->
+    <VBox spacing="4">
+        <Label text="Payload" styleClass="field-label"/>
+        <TextField fx:id="payloadField" promptText="Enter payload" styleClass="dark-field"/>
+        <Label fx:id="payloadHint" text="" styleClass="hint-label"/>
+    </VBox>
+
+    <!-- Priority -->
+    <VBox spacing="4">
+        <Label text="Priority" styleClass="field-label"/>
+        <HBox spacing="16" alignment="CENTER_LEFT">
+            <fx:define>
+                <ToggleGroup fx:id="priorityGroup"/>
+            </fx:define>
+            <RadioButton fx:id="radioPriorityHigh" text="HIGH" toggleGroup="$priorityGroup"
+                         styleClass="dark-radio"/>
+            <RadioButton fx:id="radioPriorityNormal" text="NORMAL" toggleGroup="$priorityGroup"
+                         styleClass="dark-radio" selected="true"/>
+            <RadioButton fx:id="radioPriorityLow" text="LOW" toggleGroup="$priorityGroup"
+                         styleClass="dark-radio"/>
+        </HBox>
+    </VBox>
+
+    <!-- Delay -->
+    <VBox spacing="4">
+        <Label text="Delay (ms)" styleClass="field-label"/>
+        <TextField fx:id="delayField" promptText="0 (submit immediately)" styleClass="dark-field"/>
+    </VBox>
+
+    <Region VBox.vgrow="ALWAYS"/>
+
+    <!-- Buttons -->
+    <HBox spacing="12" alignment="CENTER_RIGHT">
+        <Button fx:id="cancelBtn" text="Cancel" styleClass="btn-outline" onAction="#onCancel"/>
+        <Button fx:id="submitBtn" text="Submit" styleClass="btn-primary" onAction="#onSubmit"/>
+    </HBox>
+
+</VBox>
