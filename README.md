@@ -262,6 +262,35 @@ JavaTaskQueue/
 
 ---
 
+## GUI Dashboard
+
+A **JavaFX desktop dashboard** is available for visually managing the task queue. It connects to the server over TCP using the same protocol as the CLI client.
+
+### Running the GUI
+
+```bash
+# Make sure the server is running first:
+java -jar target/JavaTaskQueue-jar-with-dependencies.jar
+
+# Then launch the GUI (separate terminal):
+mvn javafx:run
+
+# Or build and run via the GUI fat JAR:
+mvn clean package -Pgui
+java -jar target/JavaTaskQueue-GUI-jar-with-dependencies.jar
+```
+
+### Features
+
+- **Live task table** with auto-refresh every 2 seconds
+- **Queue statistics** — total, pending, running, done, failed, cancelled
+- **Submit tasks** via a modal dialog with type, payload, priority, and optional delay
+- **Cancel tasks** directly from the table
+- **Connection management** — reconnect button, shutdown server button
+- **Dark theme** — Catppuccin-inspired dark UI with purple accent
+
+---
+
 ## License
 
 This project is licensed under the [MIT License](LICENSE).
