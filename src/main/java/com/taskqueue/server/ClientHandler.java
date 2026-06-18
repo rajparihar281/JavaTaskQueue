@@ -27,6 +27,8 @@ import java.util.logging.Logger;
  *   <li>{@code STATUS <taskId>} — query task status</li>
  *   <li>{@code LIST} — list all tasks</li>
  *   <li>{@code CANCEL <taskId>} — cancel a pending task</li>
+ *   <li>{@code LIST_DLQ} — list all tasks in the dead-letter queue</li>
+ *   <li>{@code REPLAY <taskId>} — move a dead-letter task back to the live queue</li>
  *   <li>{@code SHUTDOWN} — shut down the server</li>
  * </ul>
  * </p>
@@ -39,6 +41,8 @@ public class ClientHandler implements Runnable {
     private static final String CMD_STATUS = "STATUS";
     private static final String CMD_LIST = "LIST";
     private static final String CMD_CANCEL = "CANCEL";
+    private static final String CMD_LIST_DLQ = "LIST_DLQ";
+    private static final String CMD_REPLAY = "REPLAY";
     private static final String CMD_SHUTDOWN = "SHUTDOWN";
 
     private static final String KEY_STATUS = "status";
@@ -98,11 +102,12 @@ public class ClientHandler implements Runnable {
 
     /**
      * Parses and dispatches a single command string.
+     * Package-private to allow direct invocation from integration tests.
      *
      * @param commandLine the raw command line from the client
      * @return a JSON string response
      */
-    private String processCommand(String commandLine) {
+    String processCommand(String commandLine) {
         // Split on first space to get command and arguments
         String[] parts = commandLine.split("\\s+", 2);
         String command = parts[0].toUpperCase();
@@ -110,12 +115,14 @@ public class ClientHandler implements Runnable {
 
         try {
             return switch (command) {
-                case CMD_SUBMIT -> handleSubmit(args);
-                case CMD_STATUS -> handleStatus(args);
-                case CMD_LIST -> handleList();
-                case CMD_CANCEL -> handleCancel(args);
+                case CMD_SUBMIT   -> handleSubmit(args);
+                case CMD_STATUS   -> handleStatus(args);
+                case CMD_LIST     -> handleList();
+                case CMD_CANCEL   -> handleCancel(args);
+                case CMD_LIST_DLQ -> handleListDlq();
+                case CMD_REPLAY   -> handleReplay(args);
                 case CMD_SHUTDOWN -> handleShutdown();
-                default -> errorResponse("unknown command");
+                default           -> errorResponse("unknown command");
             };
         } catch (Exception e) {
             LOGGER.log(Level.WARNING, "Error processing command: " + commandLine, e);
@@ -214,6 +221,69 @@ public class ClientHandler implements Runnable {
         // Trigger shutdown asynchronously
         server.triggerShutdown();
 
+        return response.toString();
+    }
+
+    /**
+     * Handles the LIST_DLQ command: returns a JSON array of all tasks in the
+     * dead-letter queue.
+     */
+    private String handleListDlq() {
+        List<Task> tasks = repository.findAllDlq();
+        JSONArray array = new JSONArray();
+        for (Task task : tasks) {
+            array.put(task.toJson());
+        }
+        return array.toString();
+    }
+
+    /**
+     * Handles the REPLAY command: moves a dead-letter task back into the live
+     * queue with {@code retryCount} reset to 0 and status set to
+     * {@link TaskStatus#PENDING}.
+     *
+     * <p>If the task is not found in the dead-letter queue, returns a structured
+     * error response instead of throwing.</p>
+     */
+    private String handleReplay(String taskId) {
+        if (taskId.isEmpty()) {
+            return errorResponse("REPLAY requires a taskId");
+        }
+
+        // Look up the task in the DLQ
+        List<Task> dlqTasks = repository.findAllDlq();
+        Task dlqTask = null;
+        for (Task t : dlqTasks) {
+            if (t.getTaskId().equals(taskId)) {
+                dlqTask = t;
+                break;
+            }
+        }
+
+        if (dlqTask == null) {
+            JSONObject response = new JSONObject();
+            response.put(KEY_STATUS, "error");
+            response.put("message", "Task not found in dead-letter queue");
+            return response.toString();
+        }
+
+        // Reset retry state and re-enqueue.
+        // The task row already exists in the live 'tasks' table (with status=DEAD),
+        // so we update it in-place rather than inserting a new row.
+        dlqTask.setRetryCount(0);
+        dlqTask.setStatus(TaskStatus.PENDING);
+        dlqTask.setScheduledAt(0L);
+        dlqTask.setNextRetryAt(0L);
+        dlqTask.setCompletedAt(0L);
+
+        repository.deleteFromDlq(taskId);
+        repository.updateRetryInfo(taskId, 0, 0L);
+        repository.updateStatus(taskId, TaskStatus.PENDING);
+        broker.submit(dlqTask);
+
+        JSONObject response = new JSONObject();
+        response.put(KEY_STATUS, "ok");
+        response.put(KEY_TASK_ID, taskId);
         return response.toString();
     }
 
