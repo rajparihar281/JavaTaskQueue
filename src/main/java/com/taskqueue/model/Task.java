@@ -31,6 +31,7 @@ public class Task implements Comparable<Task> {
     private static final String JSON_KEY_COMPLETED_AT = "completedAt";
     private static final String JSON_KEY_RETRY_COUNT = "retryCount";
     private static final String JSON_KEY_MAX_RETRIES = "maxRetries";
+    private static final String JSON_KEY_NEXT_RETRY_AT = "nextRetryAt";
 
     private final String taskId;
     private final String taskType;
@@ -42,6 +43,7 @@ public class Task implements Comparable<Task> {
     private long completedAt;
     private int retryCount;
     private final int maxRetries;
+    private long nextRetryAt;
 
     /**
      * Creates a new task with the given type, payload, and priority.
@@ -54,7 +56,7 @@ public class Task implements Comparable<Task> {
      */
     public Task(String taskType, String payload, Priority priority) {
         this(UUID.randomUUID().toString(), taskType, payload, priority,
-                TaskStatus.PENDING, 0L, System.currentTimeMillis(), 0L, 0, 3);
+                TaskStatus.PENDING, 0L, System.currentTimeMillis(), 0L, 0, 3, 0L);
     }
 
     /**
@@ -74,6 +76,29 @@ public class Task implements Comparable<Task> {
     public Task(String taskId, String taskType, String payload, Priority priority,
                 TaskStatus status, long scheduledAt, long createdAt, long completedAt,
                 int retryCount, int maxRetries) {
+        this(taskId, taskType, payload, priority, status, scheduledAt, createdAt,
+                completedAt, retryCount, maxRetries, 0L);
+    }
+
+    /**
+     * Full constructor including {@code nextRetryAt} for restoring a task from
+     * persistence or JSON.
+     *
+     * @param taskId      unique task identifier
+     * @param taskType    the type identifier
+     * @param payload     task-specific data
+     * @param priority    priority level
+     * @param status      current status
+     * @param scheduledAt scheduled execution time (0 for immediate)
+     * @param createdAt   creation timestamp
+     * @param completedAt completion timestamp (0 if not completed)
+     * @param retryCount  current retry attempt count
+     * @param maxRetries  maximum number of retries allowed
+     * @param nextRetryAt epoch-ms timestamp of the next scheduled retry (0 if none)
+     */
+    public Task(String taskId, String taskType, String payload, Priority priority,
+                TaskStatus status, long scheduledAt, long createdAt, long completedAt,
+                int retryCount, int maxRetries, long nextRetryAt) {
         this.taskId = taskId;
         this.taskType = taskType;
         this.payload = payload;
@@ -84,6 +109,7 @@ public class Task implements Comparable<Task> {
         this.completedAt = completedAt;
         this.retryCount = retryCount;
         this.maxRetries = maxRetries;
+        this.nextRetryAt = nextRetryAt;
     }
 
     /**
@@ -103,6 +129,7 @@ public class Task implements Comparable<Task> {
         json.put(JSON_KEY_COMPLETED_AT, completedAt);
         json.put(JSON_KEY_RETRY_COUNT, retryCount);
         json.put(JSON_KEY_MAX_RETRIES, maxRetries);
+        json.put(JSON_KEY_NEXT_RETRY_AT, nextRetryAt);
         return json;
     }
 
@@ -123,9 +150,10 @@ public class Task implements Comparable<Task> {
         long completedAt = json.optLong(JSON_KEY_COMPLETED_AT, 0L);
         int retryCount = json.optInt(JSON_KEY_RETRY_COUNT, 0);
         int maxRetries = json.optInt(JSON_KEY_MAX_RETRIES, 3);
+        long nextRetryAt = json.optLong(JSON_KEY_NEXT_RETRY_AT, 0L);
 
         return new Task(taskId, taskType, payload, priority, status,
-                scheduledAt, createdAt, completedAt, retryCount, maxRetries);
+                scheduledAt, createdAt, completedAt, retryCount, maxRetries, nextRetryAt);
     }
 
     /**
@@ -211,5 +239,13 @@ public class Task implements Comparable<Task> {
 
     public int getMaxRetries() {
         return maxRetries;
+    }
+
+    public long getNextRetryAt() {
+        return nextRetryAt;
+    }
+
+    public void setNextRetryAt(long nextRetryAt) {
+        this.nextRetryAt = nextRetryAt;
     }
 }

@@ -9,6 +9,7 @@ package com.taskqueue.model;
  *   <li>{@code RUNNING} — Currently being executed by a worker thread</li>
  *   <li>{@code DONE} — Completed successfully</li>
  *   <li>{@code FAILED} — Execution failed (may be retried if retries remain)</li>
+ *   <li>{@code DEAD} — Exhausted all retries; moved to the dead-letter queue</li>
  *   <li>{@code CANCELLED} — Cancelled before or during execution</li>
  * </ul>
  * </p>
@@ -26,6 +27,12 @@ public enum TaskStatus {
 
     /** Task execution failed. */
     FAILED,
+
+    /**
+     * Task exhausted all retry attempts and has been moved to the
+     * dead-letter queue for manual inspection or replay.
+     */
+    DEAD,
 
     /** Task was cancelled by the user or system. */
     CANCELLED
