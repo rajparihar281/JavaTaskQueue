@@ -64,4 +64,37 @@ public interface TaskRepository {
      * @return a list of all persisted tasks
      */
     List<Task> findAll();
+
+    /**
+     * Atomically updates the retry-related fields of a task after a failed
+     * execution attempt.
+     *
+     * @param taskId      the ID of the task to update
+     * @param retryCount  the new retry count
+     * @param nextRetryAt the epoch-ms timestamp at which the next retry is scheduled
+     */
+    void updateRetryInfo(String taskId, int retryCount, long nextRetryAt);
+
+    /**
+     * Writes a task to the dead-letter queue table.
+     * Called when a task has exhausted all retry attempts.
+     *
+     * @param task the task to move to the dead-letter queue
+     */
+    void saveToDlq(Task task);
+
+    /**
+     * Returns all tasks currently in the dead-letter queue.
+     *
+     * @return a list of all dead-letter tasks
+     */
+    List<Task> findAllDlq();
+
+    /**
+     * Removes a task from the dead-letter queue.
+     * Used by the REPLAY command when re-enqueuing a dead task.
+     *
+     * @param taskId the ID of the dead-letter task to remove
+     */
+    void deleteFromDlq(String taskId);
 }
