@@ -153,5 +153,25 @@ class WorkerPoolTest {
         public List<Task> findAll() {
             return List.of();
         }
+
+        @Override
+        public void updateRetryInfo(String taskId, int retryCount, long nextRetryAt) {
+            // No-op
+        }
+
+        @Override
+        public void saveToDlq(Task task) {
+            // No-op
+        }
+
+        @Override
+        public List<Task> findAllDlq() {
+            return List.of();
+        }
+
+        @Override
+        public void deleteFromDlq(String taskId) {
+            // No-op
+        }
     }
 }
