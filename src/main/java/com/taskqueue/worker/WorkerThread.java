@@ -130,8 +130,9 @@ public class WorkerThread implements Runnable {
 
     /**
      * Handles a failed task execution. If retries remain, the task is
-     * resubmitted with exponential backoff. Otherwise, it is marked as
-     * permanently FAILED.
+     * resubmitted with exponential backoff and its retry metadata is persisted.
+     * If all retries are exhausted, the task is written to the dead-letter queue
+     * and marked {@link TaskStatus#DEAD} in the live tasks table.
      */
     private void handleFailure(Task task, TaskResult result) {
         if (task.getRetryCount() < task.getMaxRetries()) {
@@ -141,20 +142,32 @@ public class WorkerThread implements Runnable {
 
             // Exponential backoff: 2^retryCount * 1000ms
             long backoffMs = (long) Math.pow(2, newRetryCount) * BACKOFF_BASE_MS;
-            task.setScheduledAt(System.currentTimeMillis() + backoffMs);
+            long nextRetryAt = System.currentTimeMillis() + backoffMs;
+            task.setScheduledAt(nextRetryAt);
+            task.setNextRetryAt(nextRetryAt);
 
             LOGGER.info(() -> workerName + " retrying task " + task.getTaskId()
                     + " (attempt " + newRetryCount + "/" + task.getMaxRetries()
                     + ", backoff " + backoffMs + "ms)");
 
+            repository.updateRetryInfo(task.getTaskId(), newRetryCount, nextRetryAt);
             repository.updateStatus(task.getTaskId(), TaskStatus.PENDING);
             scheduler.scheduleTask(task);
         } else {
-            task.setStatus(TaskStatus.FAILED);
+            // All retries exhausted — move to dead-letter queue.
+            // saveToDlq must succeed before we mark the live record DEAD; if
+            // saveToDlq throws, the task stays FAILED so it is never silently lost.
+            task.setStatus(TaskStatus.DEAD);
             task.setCompletedAt(System.currentTimeMillis());
-            repository.updateStatusAndResult(task.getTaskId(), TaskStatus.FAILED, result);
-            LOGGER.warning(() -> workerName + " task permanently failed: " + task.getTaskId()
-                    + " — " + result.getErrorMessage());
+            try {
+                repository.saveToDlq(task);
+                repository.updateStatus(task.getTaskId(), TaskStatus.DEAD);
+                LOGGER.warning(() -> workerName + " task moved to DLQ: " + task.getTaskId()
+                        + " — " + result.getErrorMessage());
+            } catch (Exception e) {
+                LOGGER.log(Level.SEVERE, workerName + " failed to write task to DLQ: "
+                        + task.getTaskId() + "; task remains FAILED", e);
+            }
         }
     }
 }
