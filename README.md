@@ -266,6 +266,10 @@ JavaTaskQueue/
 
 A **JavaFX desktop dashboard** is available for visually managing the task queue. It connects to the server over TCP using the same protocol as the CLI client.
 
+<p align="center">
+  <img src="assets/gifs/Animation.gif" alt="JavaTaskQueue GUI Dashboard Demo" width="800">
+</p>
+
 ### Running the GUI
 
 ```bash
